@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <cuda_runtime.h>
 
@@ -47,12 +48,21 @@ void solve(const float* input, float* output, int N) {
 }
 
 int main() {
-    const int N = 8;
-    float input[N] = {1., 2., 3., 4., 5., 6., 7., 8.};
+    const int N = 1000;
+    float input[N];
     float output = 0.0f;
+
+    srand(42);
+    for (int i = 0; i < N; i++) {
+        input[i] = ((float)rand() / RAND_MAX) * 2000.0f - 1000.0f;
+    }
+
+    float gt = 0.0;
+    for (int i=0; i<N; i++) gt += input[i];
 
     solve(input, &output, N);
 
-    printf("Sum: %f\n", output);
+    float diff = fabs(gt - output);
+    printf("Ground truth: %f | Output: %f | Diff %f\n", gt, output, diff);
     return 0;
 }
